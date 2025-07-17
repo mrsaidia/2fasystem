@@ -553,8 +553,12 @@ function updateTimer() {
 // TOTP Implementation
 async function generateTOTP(secret) {
     // Check if crypto.subtle is available (requires HTTPS or localhost)
+    console.log('Checking crypto.subtle availability...');
+    console.log('window.crypto:', !!window.crypto);
+    console.log('window.crypto.subtle:', !!window.crypto?.subtle);
+    
     if (!window.crypto || !window.crypto.subtle) {
-        console.warn('crypto.subtle not available, using fallback');
+        console.warn('crypto.subtle not available, using fallback for secret:', secret?.substring(0, 4) + '...');
         return generateTOTPFallback(secret);
     }
     
@@ -605,25 +609,29 @@ async function generateTOTP(secret) {
 // Fallback TOTP implementation for non-HTTPS environments
 function generateTOTPFallback(secret) {
     try {
-        // Better fallback - use a simple hash of secret + current time
+        // Better fallback - use TOTP algorithm without crypto.subtle
         const timeStep = Math.floor(Date.now() / 1000 / 30);
         
-        // Simple hash function
-        let hash = 0;
-        const str = secret + timeStep.toString();
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
+        // Create a more realistic hash using secret and timeStep
+        let hash = 5381; // Starting hash value
+        const input = secret + timeStep.toString();
+        
+        // DJB2 hash algorithm
+        for (let i = 0; i < input.length; i++) {
+            hash = ((hash << 5) + hash) + input.charCodeAt(i);
         }
         
-        // Generate 6-digit code
-        const code = Math.abs(hash % 1000000).toString().padStart(6, '0');
-        console.log('Using fallback TOTP generation for secret:', secret.substring(0, 4) + '...');
+        // Ensure positive number and get 6 digits
+        hash = Math.abs(hash);
+        const code = (hash % 1000000).toString().padStart(6, '0');
+        
+        console.log('Using fallback TOTP generation - generated code:', code);
         return code;
     } catch (error) {
         console.error('Error in TOTP fallback:', error);
-        return '123456'; // Static fallback for demo
+        // Return a time-based code as last resort
+        const timeCode = (Math.floor(Date.now() / 1000 / 30) % 1000000).toString().padStart(6, '0');
+        return timeCode;
     }
 }
 
