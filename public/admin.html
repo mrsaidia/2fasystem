@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Share Account System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="section">
+            <div class="login-container">
+                <div class="login-header">
+                    <i class="fas fa-user-shield"></i>
+                    <h2>Admin Login</h2>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginCode">Login Code:</label>
+                        <input type="password" id="loginCode" required placeholder="Enter admin code">
+                    </div>
+                    <div class="form-group" id="twoFAGroup" style="display: none;">
+                        <label for="twoFACode">2FA Code:</label>
+                        <input type="text" id="twoFACode" placeholder="Enter 6-digit code">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                
+                <!-- Change Code Section -->
+                <div class="change-code-section">
+                    <button id="changeCodeBtn" class="btn btn-secondary btn-small">Change Login Code</button>
+                    
+                    <div id="changeCodeForm" class="hidden">
+                        <div class="form-group">
+                            <label for="hiddenCode">Hidden Code:</label>
+                            <input type="password" id="hiddenCode" placeholder="Enter hidden code">
+                        </div>
+                        <div class="form-group">
+                            <label for="newLoginCode">New Login Code:</label>
+                            <input type="text" id="newLoginCode" placeholder="Enter new login code">
+                        </div>
+                        <div class="form-actions">
+                            <button id="submitChangeCode" class="btn btn-primary btn-small">Update Code</button>
+                            <button id="cancelChangeCode" class="btn btn-secondary btn-small">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="loginError" class="error-message"></div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboardSection" class="section hidden">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="accounts"><i class="fas fa-users"></i> Accounts</button>
+                    <button class="tab-btn" data-tab="codes"><i class="fas fa-key"></i> Unique Codes</button>
+                </div>
+
+                <!-- Accounts Tab -->
+                <div id="accountsTab" class="tab-content active">
+                    <div class="tab-header">
+                        <h3><i class="fas fa-users"></i> Manage Accounts</h3>
+                        <button id="addAccountBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Add Account</button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="accountsTable">
+                            <thead>
+                                <tr>
+                                    <th>Platform</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>2FA</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Codes Tab -->
+                <div id="codesTab" class="tab-content">
+                    <div class="tab-header">
+                        <h3><i class="fas fa-key"></i> Manage Unique Codes</h3>
+                        <button id="generateCodeBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Generate Code</button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="codesTable">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Account</th>
+                                    <th>Created</th>
+                                    <th>Expires</th>
+                                    <th>Usage Count</th>
+                                    <th>Usage Limit</th>
+                                    <th>Note</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Add/Edit Account Modal -->
+        <div id="accountModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="accountModalTitle"><i class="fas fa-user-plus"></i> Add Account</h3>
+                    <span class="close" data-close-modal="accountModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="accountForm">
+                        <div class="form-group">
+                            <label for="platform">Platform:</label>
+                            <input type="text" id="platform" required placeholder="Netflix, Spotify, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountUsername">Username (Optional):</label>
+                            <input type="text" id="accountUsername" placeholder="Leave empty if not applicable">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountPassword">Password (Optional):</label>
+                            <input type="password" id="accountPassword" placeholder="Leave empty if not applicable">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email (Optional):</label>
+                            <input type="email" id="email" placeholder="Leave empty if not applicable">
+                        </div>
+                        <div class="form-group">
+                            <label for="twoFASecret">2FA Secret:</label>
+                            <input type="text" id="twoFASecret" required placeholder="Enter 2FA secret key">
+                            <small>Required: 2FA secret is mandatory for all accounts</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes:</label>
+                            <textarea id="notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" data-close-modal="accountModal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Code Modal -->
+        <div id="codeModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-key"></i> Generate Unique Code</h3>
+                    <span class="close" data-close-modal="codeModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="codeForm">
+                        <div class="form-group">
+                            <label for="accountSelect">Select Account:</label>
+                            <select id="accountSelect" required>
+                                <option value="">-- Select account --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiresIn">Expires in (days):</label>
+                            <input type="number" id="expiresIn" min="1" placeholder="Leave empty = no expiration">
+                        </div>
+                        <div class="form-group">
+                            <label for="usageLimit">Usage Limit:</label>
+                            <input type="number" id="usageLimit" min="1" placeholder="Leave empty = unlimited use">
+                            <small>Maximum number of times this code can be used</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="codeNotes">Notes:</label>
+                            <textarea id="codeNotes" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Generate Code</button>
+                            <button type="button" class="btn btn-secondary" data-close-modal="codeModal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html> 

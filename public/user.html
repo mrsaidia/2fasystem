@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Account Access</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="user-container">
+            <div class="user-header">
+                <i class="fas fa-key"></i>
+                <h1>Share Account Access</h1>
+                <p>Enter your unique code to access your account</p>
+            </div>
+
+            <!-- Code Input Section -->
+            <div id="codeInputSection" class="section">
+                <div class="code-input-container">
+                    <form id="codeForm">
+                        <div class="form-group">
+                            <label for="uniqueCode">Unique Code:</label>
+                            <input type="text" id="uniqueCode" placeholder="Enter your code" required maxlength="12">
+                            <small>Code contains 12 characters, case insensitive</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-unlock"></i> Access Account
+                        </button>
+                    </form>
+                    <div id="codeError" class="error-message"></div>
+                    <div id="codeLoading" class="loading hidden">
+                        <i class="fas fa-spinner fa-spin"></i> Processing...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Info Section -->
+            <div id="accountInfoSection" class="section hidden">
+                <div class="account-info-container">
+                    <div class="success-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h2>Access Granted</h2>
+                    </div>
+
+                    <div class="account-details">
+                        <div class="account-card">
+                            <div class="platform-header">
+                                <i class="fas fa-tv"></i>
+                                <h3 id="accountPlatform"></h3>
+                            </div>
+                            
+                            <div class="access-info">
+                                <div class="access-granted">
+                                    <i class="fas fa-check"></i>
+                                    <span>Access Granted</span>
+                                </div>
+                            </div>
+
+                            <div class="account-credentials">
+                                <div class="credential-item">
+                                    <label><i class="fas fa-user"></i> Username:</label>
+                                    <div class="credential-value">
+                                        <span id="accountUsername"></span>
+                                        <button class="btn-copy-small" data-copy="accountUsername">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="credential-item">
+                                    <label><i class="fas fa-key"></i> Password:</label>
+                                    <div class="credential-value">
+                                        <span id="accountPassword"></span>
+                                        <button class="btn-copy-small" data-copy="accountPassword">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="credential-item" id="emailItem">
+                                    <label><i class="fas fa-envelope"></i> Email:</label>
+                                    <div class="credential-value">
+                                        <span id="accountEmail"></span>
+                                        <button class="btn-copy-small" data-copy="accountEmail">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="twofa-section" id="twoFAItem">
+                                <div class="twofa-header">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>2FA Code:</span>
+                                </div>
+                                <div class="twofa-code-display">
+                                    <div class="twofa-code" id="account2FA"></div>
+                                    <div class="twofa-timer" id="twoFATimer">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Expires in ~30s</span>
+                                    </div>
+                                    <button class="btn-copy-small twofa-copy" data-copy="account2FA">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="twofa-actions">
+                                    <button class="btn btn-copy-2fa" data-copy="account2FA">
+                                        <i class="fas fa-copy"></i> Copy 2FA Code
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="code-info">
+                                <div class="code-expiry">
+                                    <label><i class="fas fa-calendar-alt"></i> Code Expires:</label>
+                                    <span id="codeExpiryDate"></span>
+                                </div>
+                                <div class="usage-stats">
+                                    <div class="usage-item">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>Usage: <span id="usageCount">0</span></span>
+                                        <i class="fas fa-check" style="color: #10b981;"></i>
+                                    </div>
+                                    <div class="usage-item">
+                                        <span>Remaining: <span id="remainingUses">∞</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-clear" id="backBtn">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-copy-all" id="copyAllBtn">
+                            <i class="fas fa-copy"></i> Copy All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2024 Share Account System. All rights reserved.</p>
+                <p><a href="/admin">Admin Panel</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="user.js"></script>
+</body>
+</html> 

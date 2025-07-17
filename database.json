@@ -1,0 +1,108 @@
+{
+  "admin": {
+    "loginCode": "SODADA",
+    "secret": "I5SCMOJ6FZNXI3KFMFSWKWTFGBZX2S2UPNFD4QTHO53FIZ3OHMXA",
+    "isSetup": false
+  },
+  "accounts": [
+    {
+      "id": "7a2e8943-b850-49d6-92c4-8347a617a2e6",
+      "platform": "DSADSAD",
+      "username": "asdsa",
+      "password": "ASDASDAD",
+      "email": "saidia1012@gmail.com",
+      "twoFASecret": "IXLRL2WAH5XQQFXT",
+      "notes": "",
+      "createdAt": "2025-07-15T13:17:30.135Z",
+      "isActive": true
+    },
+    {
+      "id": "test-account-123",
+      "platform": "Netflix Test",
+      "username": "test@example.com",
+      "password": "TestPassword123",
+      "email": "test@example.com",
+      "twoFASecret": "JBSWY3DPEHPK3PXP",
+      "notes": "Test account with 2FA",
+      "createdAt": "2025-07-15T14:00:00.000Z",
+      "isActive": true
+    },
+    {
+      "id": "b8693680-a51b-481a-a4e7-df77096a9e68",
+      "platform": "test",
+      "username": null,
+      "password": null,
+      "email": null,
+      "twoFASecret": "IXLRL2WAH5XQQFXT",
+      "notes": null,
+      "createdAt": "2025-07-15T14:14:59.231Z",
+      "isActive": true
+    }
+  ],
+  "uniqueCodes": [
+    {
+      "id": "020604ee-b0de-4f54-a231-b78803582b0f",
+      "code": "EE67E9601A15",
+      "accountId": "7a2e8943-b850-49d6-92c4-8347a617a2e6",
+      "accountInfo": {
+        "platform": "DSADSAD",
+        "username": "asdsa"
+      },
+      "createdAt": "2025-07-15T13:35:05.831Z",
+      "expiresAt": "2025-07-26T13:35:05.831Z",
+      "isUsed": true,
+      "usedAt": "2025-07-17T15:51:23.874Z",
+      "usageCount": 3,
+      "notes": ""
+    },
+    {
+      "id": "0dad020d-64dd-47df-98a4-df69ab70a08b",
+      "code": "B103E72DFA8E",
+      "accountId": "test-account-123",
+      "accountInfo": {
+        "platform": "Netflix Test",
+        "username": "test@example.com"
+      },
+      "createdAt": "2025-07-15T14:03:54.412Z",
+      "expiresAt": "2025-07-26T14:03:54.412Z",
+      "isUsed": true,
+      "usedAt": "2025-07-17T15:49:08.629Z",
+      "usageCount": 2,
+      "usageLimit": 3,
+      "notes": ""
+    },
+    {
+      "id": "49a715e0-d7d3-4fef-9719-9a0ce56f3e64",
+      "code": "67CAF99470BF",
+      "accountId": "7a2e8943-b850-49d6-92c4-8347a617a2e6",
+      "accountInfo": {
+        "platform": "DSADSAD",
+        "username": "asdsa"
+      },
+      "createdAt": "2025-07-17T15:51:17.762Z",
+      "expiresAt": null,
+      "isUsed": true,
+      "usedAt": "2025-07-17T15:55:29.626Z",
+      "usageCount": 1,
+      "usageLimit": null,
+      "notes": "abc"
+    },
+    {
+      "id": "04fa36a0-6184-4952-ae79-62bd28bd34ef",
+      "code": "7D272DA0425D",
+      "accountId": "b8693680-a51b-481a-a4e7-df77096a9e68",
+      "accountInfo": {
+        "platform": "test",
+        "username": null
+      },
+      "createdAt": "2025-07-17T15:58:22.690Z",
+      "expiresAt": "2025-07-18T15:59:01.202Z",
+      "isUsed": true,
+      "usedAt": "2025-07-17T15:58:51.681Z",
+      "usageCount": 2,
+      "usageLimit": 3,
+      "notes": "abc"
+    }
+  ],
+  "users": []
+}
