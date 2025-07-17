@@ -6,7 +6,9 @@ module.exports = {
     exec_mode: 'fork',
     autorestart: true,
     watch: false,
-    max_memory_restart: '1G',
+    max_memory_restart: '500M',
+    min_uptime: '10s',
+    max_restarts: 5,
     env_file: '.env',
     env: {
       NODE_ENV: 'production',

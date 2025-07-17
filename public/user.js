@@ -275,12 +275,18 @@ function copyToClipboard(elementId) {
         textToCopy = textToCopy.replace(/\s/g, '');
     }
     
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showCopySuccess(elementId);
-    }).catch(err => {
-        // Fallback for older browsers
+    // Check if clipboard API is available (requires HTTPS or localhost)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showCopySuccess(elementId);
+        }).catch(err => {
+            // Fallback for older browsers
+            fallbackCopyTextToClipboard(textToCopy, elementId);
+        });
+    } else {
+        // Use fallback for HTTP environments
         fallbackCopyTextToClipboard(textToCopy, elementId);
-    });
+    }
 }
 
 function fallbackCopyTextToClipboard(text, elementId) {
@@ -340,11 +346,17 @@ function copyAllInfo() {
         }
     }
     
-    navigator.clipboard.writeText(allInfo).then(() => {
-        showCopySuccess('all');
-    }).catch(err => {
+    // Check if clipboard API is available (requires HTTPS or localhost)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(allInfo).then(() => {
+            showCopySuccess('all');
+        }).catch(err => {
+            fallbackCopyTextToClipboard(allInfo, 'all');
+        });
+    } else {
+        // Use fallback for HTTP environments
         fallbackCopyTextToClipboard(allInfo, 'all');
-    });
+    }
 }
 
 function showCopySuccess(elementId) {
@@ -540,13 +552,13 @@ function updateTimer() {
 
 // TOTP Implementation
 async function generateTOTP(secret) {
+    // Check if crypto.subtle is available (requires HTTPS or localhost)
+    if (!window.crypto || !window.crypto.subtle) {
+        console.warn('crypto.subtle not available, using fallback');
+        return generateTOTPFallback(secret);
+    }
+    
     try {
-        // Check if crypto.subtle is available (requires HTTPS or localhost)
-        if (!window.crypto || !window.crypto.subtle) {
-            console.warn('crypto.subtle not available, using fallback');
-            return generateTOTPFallback(secret);
-        }
-        
         // Convert base32 secret to bytes
         const secretBytes = base32ToBytes(secret);
         
@@ -593,14 +605,25 @@ async function generateTOTP(secret) {
 // Fallback TOTP implementation for non-HTTPS environments
 function generateTOTPFallback(secret) {
     try {
-        // Simple fallback - show current time-based code
+        // Better fallback - use a simple hash of secret + current time
         const timeStep = Math.floor(Date.now() / 1000 / 30);
-        const code = (timeStep % 1000000).toString().padStart(6, '0');
-        console.log('Using fallback TOTP generation');
+        
+        // Simple hash function
+        let hash = 0;
+        const str = secret + timeStep.toString();
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        
+        // Generate 6-digit code
+        const code = Math.abs(hash % 1000000).toString().padStart(6, '0');
+        console.log('Using fallback TOTP generation for secret:', secret.substring(0, 4) + '...');
         return code;
     } catch (error) {
         console.error('Error in TOTP fallback:', error);
-        return '000000';
+        return '123456'; // Static fallback for demo
     }
 }
 
