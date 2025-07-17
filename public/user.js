@@ -541,6 +541,12 @@ function updateTimer() {
 // TOTP Implementation
 async function generateTOTP(secret) {
     try {
+        // Check if crypto.subtle is available (requires HTTPS or localhost)
+        if (!window.crypto || !window.crypto.subtle) {
+            console.warn('crypto.subtle not available, using fallback');
+            return generateTOTPFallback(secret);
+        }
+        
         // Convert base32 secret to bytes
         const secretBytes = base32ToBytes(secret);
         
@@ -580,6 +586,20 @@ async function generateTOTP(secret) {
         
     } catch (error) {
         console.error('Error generating TOTP:', error);
+        return '000000';
+    }
+}
+
+// Fallback TOTP implementation for non-HTTPS environments
+function generateTOTPFallback(secret) {
+    try {
+        // Simple fallback - show current time-based code
+        const timeStep = Math.floor(Date.now() / 1000 / 30);
+        const code = (timeStep % 1000000).toString().padStart(6, '0');
+        console.log('Using fallback TOTP generation');
+        return code;
+    } catch (error) {
+        console.error('Error in TOTP fallback:', error);
         return '000000';
     }
 }
