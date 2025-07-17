@@ -11,11 +11,17 @@ const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = 'your-super-secret-key-change-in-production';
-const HIDDEN_CODE = '55555'; // Hidden code to change admin login code
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
+const HIDDEN_CODE = process.env.HIDDEN_CODE || '55555'; // Hidden code to change admin login code
 
-// Middleware
-app.use(helmet());
+// Middleware - Simple config for better compatibility
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP to avoid CSS loading issues
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false
+  }));
+}
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));

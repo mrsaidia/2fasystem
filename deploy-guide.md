@@ -1,40 +1,65 @@
 # Hướng Dẫn Deploy 2FA System lên VPS Linux với PM2
 
-## Bước 1: Chuẩn bị VPS Linux
+## 🚀 Deploy Nhanh - 2 Bước Đơn Giản
 
-### Cập nhật hệ thống
+### Bước 1: Setup VPS mới
 ```bash
-sudo apt update && sudo apt upgrade -y
+# SSH vào VPS với user thường (không phải root)
+ssh username@your-vps-ip
+
+# Tải và chạy script setup
+curl -fsSL https://raw.githubusercontent.com/mrsaidia/2fasystem/main/setup-vps.sh -o setup-vps.sh
+chmod +x setup-vps.sh
+./setup-vps.sh
 ```
 
-### Cài đặt Node.js và npm
+### Bước 2: Deploy ứng dụng
 ```bash
+# Script setup sẽ tự động clone code, chỉ cần chạy deploy
+cd 2fasystem
+./deploy.sh
+```
+
+## 📋 Truy cập ứng dụng
+- **User panel:** `http://your-vps-ip:3000`
+- **Admin panel:** `http://your-vps-ip:3000/admin`
+
+---
+
+## 🔧 Hướng Dẫn Chi Tiết
+
+### Bước 1: Chuẩn bị VPS Linux
+
+#### Tạo user (nếu đang dùng root)
+```bash
+# Nếu đang SSH với root, tạo user thường
+adduser deploy
+usermod -aG sudo deploy
+su - deploy
+```
+
+#### Cài đặt thủ công (thay vì dùng script)
+```bash
+# Cập nhật hệ thống
+sudo apt update && sudo apt upgrade -y
+
 # Cài đặt Node.js 18.x LTS
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Kiểm tra version
-node --version
-npm --version
-```
-
-### Cài đặt PM2 global
-```bash
+# Cài đặt PM2 global
 sudo npm install -g pm2
-```
 
-### Cài đặt Git (nếu chưa có)
-```bash
+# Cài đặt Git
 sudo apt install git -y
 ```
 
-## Bước 2: Upload source code lên VPS
+### Bước 2: Clone source code
 
-### Cách 1: Sử dụng Git (Khuyến nghị)
 ```bash
 # Clone repository từ GitHub
-git clone https://github.com/your-username/2fa-system.git
-cd 2fa-system
+git clone https://github.com/mrsaidia/2fasystem.git
+cd 2fasystem
 ```
 
 ### Cách 2: Upload trực tiếp
