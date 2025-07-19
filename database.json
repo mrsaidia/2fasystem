@@ -12,7 +12,7 @@
       "password": "ASDASDAD",
       "email": "saidia1012@gmail.com",
       "twoFASecret": "IXLRL2WAH5XQQFXT",
-      "notes": "",
+      "notes": "fdasf",
       "createdAt": "2025-07-15T13:17:30.135Z",
       "isActive": true
     },
@@ -49,11 +49,12 @@
         "username": "asdsa"
       },
       "createdAt": "2025-07-15T13:35:05.831Z",
-      "expiresAt": "2025-07-26T13:35:05.831Z",
+      "expiresAt": "2025-07-27T08:12:59.092Z",
       "isUsed": true,
-      "usedAt": "2025-07-17T18:03:45.902Z",
-      "usageCount": 4,
-      "notes": ""
+      "usedAt": "2025-07-19T08:31:19.979Z",
+      "usageCount": 16,
+      "notes": "asda",
+      "usageLimit": null
     },
     {
       "id": "0dad020d-64dd-47df-98a4-df69ab70a08b",
@@ -82,8 +83,8 @@
       "createdAt": "2025-07-17T15:51:17.762Z",
       "expiresAt": null,
       "isUsed": true,
-      "usedAt": "2025-07-17T15:55:29.626Z",
-      "usageCount": 1,
+      "usedAt": "2025-07-19T08:22:36.380Z",
+      "usageCount": 5,
       "usageLimit": null,
       "notes": "abc"
     },
@@ -96,12 +97,28 @@
         "username": null
       },
       "createdAt": "2025-07-17T15:58:22.690Z",
-      "expiresAt": "2025-07-18T15:59:01.202Z",
+      "expiresAt": null,
       "isUsed": true,
       "usedAt": "2025-07-17T15:58:51.681Z",
       "usageCount": 2,
       "usageLimit": 3,
       "notes": "abc"
+    },
+    {
+      "id": "d0065515-2033-4b7b-9e2c-2b52ab9657d2",
+      "code": "A13670F4C980",
+      "accountId": "test-account-123",
+      "accountInfo": {
+        "platform": "Netflix Test",
+        "username": "test@example.com"
+      },
+      "createdAt": "2025-07-19T08:20:26.455Z",
+      "expiresAt": null,
+      "isUsed": false,
+      "usedAt": null,
+      "usageCount": 0,
+      "usageLimit": null,
+      "notes": "ASSD"
     }
   ],
   "users": []

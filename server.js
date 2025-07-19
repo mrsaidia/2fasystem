@@ -498,7 +498,8 @@ app.post('/api/user/verify-code', (req, res) => {
         code: uniqueCode.code,
         expiresAt: uniqueCode.expiresAt,
         usageCount: uniqueCode.usageCount,
-        usageLimit: uniqueCode.usageLimit
+        usageLimit: uniqueCode.usageLimit,
+        notes: uniqueCode.notes
       }
     });
     

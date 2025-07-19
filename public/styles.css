@@ -859,7 +859,41 @@ table tr:hover {
     letter-spacing: 4px;
     color: #166534;
     font-family: monospace;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.countdown-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.countdown-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 4px;
+    width: 100%;
+    transition: width 0.1s ease-out, background 0.3s ease;
+    position: relative;
+}
+
+.countdown-bar.warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.countdown-bar.danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.timer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .twofa-timer {
@@ -867,13 +901,37 @@ table tr:hover {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    color: #dc2626;
+    color: #6366f1;
     font-weight: 600;
-    margin-bottom: 15px;
+    font-size: 14px;
+    padding: 6px 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    transition: all 0.3s ease;
 }
 
 .twofa-timer i {
-    color: #dc2626;
+    color: inherit;
+}
+
+.session-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #059669;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 8px 16px;
+    background: rgba(5, 150, 105, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(5, 150, 105, 0.2);
+    transition: all 0.3s ease;
+}
+
+.session-timer i {
+    color: inherit;
 }
 
 .twofa-copy {
@@ -952,6 +1010,46 @@ table tr:hover {
 
 .usage-item i {
     color: #6b7280;
+}
+
+.code-notes {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f59e0b;
+}
+
+.code-notes label {
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.notes-content {
+    background: #fefbf3;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 12px;
+    color: #1f2937;
+    font-style: italic;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.code-notes-cell {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #6b7280;
+    font-style: italic;
+    cursor: help;
+}
+
+.code-notes-cell:hover {
+    color: #374151;
 }
 
 .action-buttons {

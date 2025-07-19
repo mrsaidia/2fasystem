@@ -318,6 +318,11 @@ function renderCodesTable() {
                 <span class="usage-limit">${code.usageLimit || 'Unlimited'}</span>
             </td>
             <td>
+                <div class="code-notes-cell" title="${code.notes || ''}">
+                    ${code.notes ? (code.notes.length > 30 ? code.notes.substring(0, 30) + '...' : code.notes) : '-'}
+                </div>
+            </td>
+            <td>
                 <span class="status-badge ${status.class}">
                     ${status.text}
                 </span>

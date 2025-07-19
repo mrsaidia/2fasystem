@@ -97,9 +97,18 @@
                                 </div>
                                 <div class="twofa-code-display">
                                     <div class="twofa-code" id="account2FA"></div>
-                                    <div class="twofa-timer" id="twoFATimer">
-                                        <i class="fas fa-clock"></i>
-                                        <span>Expires in ~30s</span>
+                                    <div class="countdown-bar-container">
+                                        <div class="countdown-bar" id="countdownBar"></div>
+                                    </div>
+                                    <div class="timer-section">
+                                        <div class="twofa-timer" id="totpTimer">
+                                            <i class="fas fa-refresh"></i>
+                                            <span>New code in ~30s</span>
+                                        </div>
+                                        <div class="session-timer" id="sessionTimer">
+                                            <i class="fas fa-clock"></i>
+                                            <span>Session expires in 1m 0s</span>
+                                        </div>
                                     </div>
                                     <button class="btn-copy-small twofa-copy" data-copy="account2FA">
                                         <i class="fas fa-copy"></i>
@@ -126,6 +135,10 @@
                                     <div class="usage-item">
                                         <span>Remaining: <span id="remainingUses">∞</span></span>
                                     </div>
+                                </div>
+                                <div class="code-notes" id="codeNotesSection" style="display: none;">
+                                    <label><i class="fas fa-sticky-note"></i> Admin Notes:</label>
+                                    <div class="notes-content" id="codeNotes"></div>
                                 </div>
                             </div>
                         </div>

@@ -11,6 +11,9 @@ let codeData = null;
 let isPasswordVisible = false;
 let is2FAVisible = false;
 let twoFAInterval = null;
+let twoFATimeoutTimer = null;
+let twoFAStartTime = null;
+let displayTimeout = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
@@ -182,6 +185,17 @@ function showAccountInfo() {
         } else {
             document.getElementById('remainingUses').textContent = '∞';
         }
+        
+        // Handle admin notes (optional)
+        const notesSection = document.getElementById('codeNotesSection');
+        const notesContent = document.getElementById('codeNotes');
+        
+        if (codeData.notes && codeData.notes.trim()) {
+            notesContent.textContent = codeData.notes;
+            notesSection.style.display = 'block';
+        } else {
+            notesSection.style.display = 'none';
+        }
     }
     
     // Show account info section
@@ -197,6 +211,59 @@ function resetForm() {
         clearInterval(twoFAInterval);
         twoFAInterval = null;
     }
+    if (twoFATimeoutTimer) {
+        clearTimeout(twoFATimeoutTimer);
+        twoFATimeoutTimer = null;
+    }
+    if (displayTimeout) {
+        clearTimeout(displayTimeout);
+        displayTimeout = null;
+    }
+    
+    // Clear all data first
+    accountData = null;
+    codeData = null;
+    twoFAStartTime = null;
+    
+    // Reset all UI elements to clean state
+    const twoFAElement = document.getElementById('account2FA');
+    const sessionTimer = document.getElementById('sessionTimer');
+    const totpTimer = document.getElementById('totpTimer');
+    const countdownBar = document.getElementById('countdownBar');
+    
+    if (twoFAElement) {
+        twoFAElement.textContent = '';
+        twoFAElement.style.background = '';
+        twoFAElement.style.borderColor = '';
+        twoFAElement.style.color = '';
+    }
+    
+    if (sessionTimer) {
+        const sessionSpan = sessionTimer.querySelector('span');
+        if (sessionSpan) {
+            sessionSpan.textContent = 'Ready';
+        }
+        // Reset styles
+        sessionTimer.style.color = '#059669';
+        sessionTimer.style.background = 'rgba(5, 150, 105, 0.1)';
+        sessionTimer.style.borderColor = 'rgba(5, 150, 105, 0.2)';
+    }
+    
+    if (totpTimer) {
+        const totpSpan = totpTimer.querySelector('span');
+        if (totpSpan) {
+            totpSpan.textContent = 'Ready';
+        }
+        // Reset styles
+        totpTimer.style.color = '#6366f1';
+        totpTimer.style.background = 'rgba(99, 102, 241, 0.1)';
+        totpTimer.style.borderColor = 'rgba(99, 102, 241, 0.2)';
+    }
+    
+    if (countdownBar) {
+        countdownBar.style.width = '0%';
+        countdownBar.className = 'countdown-bar';
+    }
     
     // Hide account info section
     accountInfoSection.classList.add('hidden');
@@ -204,10 +271,8 @@ function resetForm() {
     // Show code input section
     codeInputSection.classList.remove('hidden');
     
-    // Clear form and data
+    // Clear form
     document.getElementById('uniqueCode').value = '';
-    accountData = null;
-    codeData = null;
     hideError();
     
     // Focus on input
@@ -343,6 +408,9 @@ function copyAllInfo() {
         if (codeData.usageLimit) {
             const remaining = codeData.usageLimit - (codeData.usageCount || 0);
             allInfo += `Remaining Uses: ${remaining}\n`;
+        }
+        if (codeData.notes && codeData.notes.trim()) {
+            allInfo += `Admin Notes: ${codeData.notes}\n`;
         }
     }
     
@@ -494,12 +562,109 @@ function start2FACodeGeneration() {
     if (twoFAInterval) {
         clearInterval(twoFAInterval);
     }
+    if (twoFATimeoutTimer) {
+        clearTimeout(twoFATimeoutTimer);
+        twoFATimeoutTimer = null;
+    }
+    if (displayTimeout) {
+        clearTimeout(displayTimeout);
+        displayTimeout = null;
+    }
+    
+    // Record start time for 60-second countdown
+    twoFAStartTime = Date.now();
     
     // Generate and display the first code immediately
     update2FACode();
     
-    // Update every 30 seconds
-    twoFAInterval = setInterval(update2FACode, 30000);
+    // Calculate time until next 30-second interval for precise TOTP sync
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeUntilNext30s = (30 - (currentTime % 30)) * 1000;
+    
+    // Schedule first update at the next 30-second mark for real-time sync
+    setTimeout(() => {
+        if (accountData && accountData.twoFASecret && twoFAStartTime) {
+            update2FACode();
+            // Then update every 30 seconds exactly on the 30-second marks
+            twoFAInterval = setInterval(() => {
+                if (accountData && accountData.twoFASecret && twoFAStartTime) {
+                    update2FACode();
+                }
+            }, 30000);
+        }
+    }, timeUntilNext30s);
+    
+    // Set timeout for 60 seconds (1 minute)
+    twoFATimeoutTimer = setTimeout(() => {
+        hide2FACode();
+    }, 60000);
+    
+    // Update timer and countdown bar every second with high precision
+    updateTimer();
+}
+
+function hide2FACode() {
+    // Clear intervals and timeouts
+    if (twoFAInterval) {
+        clearInterval(twoFAInterval);
+        twoFAInterval = null;
+    }
+    if (twoFATimeoutTimer) {
+        clearTimeout(twoFATimeoutTimer);
+        twoFATimeoutTimer = null;
+    }
+    if (displayTimeout) {
+        clearTimeout(displayTimeout);
+        displayTimeout = null;
+    }
+    
+    // Hide 2FA section and show timeout message
+    const twoFAItem = document.getElementById('twoFAItem');
+    const twoFAElement = document.getElementById('account2FA');
+    const sessionTimer = document.getElementById('sessionTimer');
+    const totpTimer = document.getElementById('totpTimer');
+    const countdownBar = document.getElementById('countdownBar');
+    
+    if (twoFAElement) {
+        twoFAElement.textContent = 'Code expired';
+        twoFAElement.style.background = '#fee2e2';
+        twoFAElement.style.borderColor = '#dc2626';
+        twoFAElement.style.color = '#dc2626';
+    }
+    
+    if (sessionTimer) {
+        const sessionSpan = sessionTimer.querySelector('span');
+        if (sessionSpan) {
+            sessionSpan.textContent = 'Session expired';
+        }
+        sessionTimer.style.color = '#dc2626';
+        sessionTimer.style.background = 'rgba(220, 38, 38, 0.1)';
+        sessionTimer.style.borderColor = 'rgba(220, 38, 38, 0.2)';
+    }
+    
+    if (totpTimer) {
+        const totpSpan = totpTimer.querySelector('span');
+        if (totpSpan) {
+            totpSpan.textContent = 'Access expired';
+        }
+        totpTimer.style.color = '#dc2626';
+        totpTimer.style.background = 'rgba(220, 38, 38, 0.1)';
+        totpTimer.style.borderColor = 'rgba(220, 38, 38, 0.2)';
+    }
+    
+    if (countdownBar) {
+        countdownBar.style.width = '0%';
+        countdownBar.className = 'countdown-bar danger';
+    }
+    
+    // Clear all state
+    twoFAStartTime = null;
+    
+    // Prevent any further updates
+    if (displayTimeout) {
+        clearTimeout(displayTimeout);
+        displayTimeout = null;
+    }
 }
 
 async function update2FACode() {
@@ -517,8 +682,32 @@ async function update2FACode() {
             twoFAElement.textContent = formattedCode;
         }
         
-        // Update timer display
-        updateTimer();
+        // Reset countdown bar when new code is generated - sync with real TOTP time
+        const countdownBar = document.getElementById('countdownBar');
+        if (countdownBar) {
+            // Calculate current position in 30-second cycle for accurate display
+            const currentTime = Math.floor(Date.now() / 1000);
+            const totpTimeLeft = 30 - (currentTime % 30);
+            const totpPercentage = Math.max(0, (totpTimeLeft / 30) * 100);
+            
+            countdownBar.style.width = totpPercentage + '%';
+            countdownBar.className = 'countdown-bar';
+            
+            // Apply appropriate color based on time left
+            if (totpTimeLeft <= 5) {
+                countdownBar.classList.add('danger');
+            } else if (totpTimeLeft <= 15) {
+                countdownBar.classList.add('warning');
+            }
+        }
+        
+        // Reset TOTP timer color when new code is generated
+        const totpTimer = document.getElementById('totpTimer');
+        if (totpTimer) {
+            totpTimer.style.color = '#6366f1';
+            totpTimer.style.background = 'rgba(99, 102, 241, 0.1)';
+            totpTimer.style.borderColor = 'rgba(99, 102, 241, 0.2)';
+        }
         
     } catch (error) {
         console.error('Error generating 2FA code:', error);
@@ -530,24 +719,92 @@ async function update2FACode() {
 }
 
 function updateTimer() {
-    // Calculate seconds until next 30-second interval
-    const now = Math.floor(Date.now() / 1000);
-    const timeLeft = 30 - (now % 30);
+    if (!twoFAStartTime) return;
     
-    const timerElement = document.getElementById('twoFATimer');
-    if (timerElement) {
-        const timerSpan = timerElement.querySelector('span');
-        if (timerSpan) {
-            timerSpan.textContent = `Expires in ~${timeLeft}s`;
+    const now = Date.now();
+    const elapsed = Math.floor((now - twoFAStartTime) / 1000);
+    const sessionTimeLeft = Math.max(0, 60 - elapsed);
+    
+    // Update session timer (60-second countdown for entire session)
+    const sessionTimerElement = document.getElementById('sessionTimer');
+    if (sessionTimerElement) {
+        const sessionSpan = sessionTimerElement.querySelector('span');
+        if (sessionSpan && sessionTimeLeft > 0) {
+            const minutes = Math.floor(sessionTimeLeft / 60);
+            const seconds = sessionTimeLeft % 60;
+            if (minutes > 0) {
+                sessionSpan.textContent = `Session expires in ${minutes}m ${seconds}s`;
+            } else {
+                sessionSpan.textContent = `Session expires in ${seconds}s`;
+            }
+            
+            // Change color based on time remaining
+            if (sessionTimeLeft <= 15) {
+                sessionTimerElement.style.color = '#dc2626';
+                sessionTimerElement.style.background = 'rgba(220, 38, 38, 0.1)';
+                sessionTimerElement.style.borderColor = 'rgba(220, 38, 38, 0.2)';
+            } else if (sessionTimeLeft <= 30) {
+                sessionTimerElement.style.color = '#f59e0b';
+                sessionTimerElement.style.background = 'rgba(245, 158, 11, 0.1)';
+                sessionTimerElement.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+            }
         }
     }
     
-    // Continue updating timer every second
-    setTimeout(() => {
-        if (accountData && accountData.twoFASecret) {
-            updateTimer();
+    // Update TOTP timer (30-second countdown for each 2FA code)
+    const totpTimerElement = document.getElementById('totpTimer');
+    if (totpTimerElement && sessionTimeLeft > 0) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const totpTimeLeft = 30 - (currentTime % 30);
+        const totpSpan = totpTimerElement.querySelector('span');
+        
+        if (totpSpan) {
+            totpSpan.textContent = `New code in ${totpTimeLeft}s`;
+            
+            // Change color based on TOTP time remaining
+            if (totpTimeLeft <= 5) {
+                totpTimerElement.style.color = '#dc2626';
+                totpTimerElement.style.background = 'rgba(220, 38, 38, 0.1)';
+                totpTimerElement.style.borderColor = 'rgba(220, 38, 38, 0.2)';
+            } else if (totpTimeLeft <= 10) {
+                totpTimerElement.style.color = '#f59e0b';
+                totpTimerElement.style.background = 'rgba(245, 158, 11, 0.1)';
+                totpTimerElement.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+            } else {
+                totpTimerElement.style.color = '#6366f1';
+                totpTimerElement.style.background = 'rgba(99, 102, 241, 0.1)';
+                totpTimerElement.style.borderColor = 'rgba(99, 102, 241, 0.2)';
+            }
         }
-    }, 1000);
+    }
+    
+    // Update countdown bar for 2FA code (30-second cycles) - real-time sync
+    const countdownBar = document.getElementById('countdownBar');
+    if (countdownBar && sessionTimeLeft > 0) {
+        // Calculate seconds until next 30-second interval for 2FA code refresh
+        const currentTime = Math.floor(Date.now() / 1000);
+        const totpTimeLeft = 30 - (currentTime % 30);
+        const totpPercentage = Math.max(0, (totpTimeLeft / 30) * 100);
+        
+        countdownBar.style.width = totpPercentage + '%';
+        
+        // Change bar color based on 2FA code time left
+        countdownBar.className = 'countdown-bar';
+        if (totpTimeLeft <= 5) {
+            countdownBar.classList.add('danger');
+        } else if (totpTimeLeft <= 15) {
+            countdownBar.classList.add('warning');
+        }
+    }
+    
+    // Continue updating timer every second with precise timing
+    if (sessionTimeLeft > 0 && accountData && accountData.twoFASecret && twoFAStartTime) {
+        setTimeout(() => {
+            if (accountData && accountData.twoFASecret && twoFAStartTime) {
+                updateTimer();
+            }
+        }, 100); // Update every 100ms for smoother countdown
+    }
 }
 
 // TOTP Implementation
